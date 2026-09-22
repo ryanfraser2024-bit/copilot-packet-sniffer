@@ -47,6 +47,15 @@ def test_redact_url_matches_sensitive_parameters_case_insensitively() -> None:
 	)
 
 
+def test_redact_url_redacts_email_values_and_sensitive_values() -> None:
+	redacted = redact_url("https://example.test/?email=student@example.com&token=fake-token")
+
+	assert "%5BREDACTED_EMAIL%5D" in redacted
+	assert "%5BREDACTED%5D" in redacted
+	assert "student@example.com" not in redacted
+	assert "student%40example.com" not in redacted
+
+
 def test_redact_url_preserves_nonsensitive_query_parameters() -> None:
 	url = "https://example.test/?topic=training&count=2"
 	assert redact_url(url) == url

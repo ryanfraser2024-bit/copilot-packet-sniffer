@@ -57,7 +57,9 @@ def redact_url(url: str) -> str:
 		return url
 
 	query = [
-		(key, "[REDACTED]") if key.lower() in _SENSITIVE_QUERY_KEYS else (key, value)
+		(key, "[REDACTED]")
+		if key.lower() in _SENSITIVE_QUERY_KEYS
+		else (key, redact_text(value))
 		for key, value in parse_qsl(parts.query, keep_blank_values=True)
 	]
 	return urlunsplit((parts.scheme, parts.netloc, parts.path, urlencode(query), parts.fragment))

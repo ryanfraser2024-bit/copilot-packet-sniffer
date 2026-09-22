@@ -1,0 +1,1 @@
+{"destination": "192.168.1.xxx", "destination_port": 53, "dns_query": "example.test", "link": "ethernet", "network": "ipv4", "source": "192.168.1.xxx", "source_port": 53000, "transport": "udp"}

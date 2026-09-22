@@ -1,0 +1,1 @@
+{"destination": "192.168.1.xxx", "destination_port": 80, "http": {"headers": {"Authorization": "[REDACTED]", "Cookie": "[REDACTED]", "Host": "lab.local"}, "host": "lab.local", "method": "GET", "path": "/demo?email=%5BREDACTED_EMAIL%5D&token=%5BREDACTED%5D"}, "link": "ethernet", "network": "ipv4", "source": "192.168.1.xxx", "source_port": 50000, "transport": "tcp"}

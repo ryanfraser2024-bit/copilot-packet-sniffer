@@ -5,7 +5,7 @@ import json
 import sys
 from collections.abc import Iterable, Sequence
 from pathlib import Path
-from typing import TextIO
+from typing import Any, TextIO
 
 from scapy.all import (
 	DNS,
@@ -14,6 +14,7 @@ from scapy.all import (
 	IP,
 	IPv6,
 	Loopback,
+	PcapReader,
 	Raw,
 	TCP,
 	UDP,
@@ -152,11 +153,44 @@ def write_records(packets: Iterable[Any], output: TextIO) -> None:
 		output.write(json.dumps(decode_packet(packet), sort_keys=True) + "\n")
 
 
+def matches_filter(packet: Any, filter_text: str) -> bool:
+	"""Return whether a packet matches one of the supported safe filters."""
+	if filter_text == "tcp":
+		return packet.haslayer(TCP)
+	if filter_text == "udp":
+		return packet.haslayer(UDP)
+	if filter_text.startswith("tcp port "):
+		if not packet.haslayer(TCP):
+			return False
+		port = int(filter_text.rsplit(" ", 1)[1])
+		return int(packet[TCP].sport) == port or int(packet[TCP].dport) == port
+	if filter_text == "udp port 53":
+		if not packet.haslayer(UDP):
+			return False
+		return int(packet[UDP].sport) == 53 or int(packet[UDP].dport) == 53
+	return False
+
+
+def read_pcap(path: str, filter_text: str, count: int) -> Iterable[Any]:
+	"""Read and filter at most count packets directly from a PCAP file."""
+	reader = PcapReader(path)
+	matched = 0
+	try:
+		for packet in reader:
+			if matches_filter(packet, filter_text):
+				yield packet
+				matched += 1
+				if matched >= count:
+					break
+	finally:
+		reader.close()
+
+
 def capture(args: argparse.Namespace, output: TextIO) -> int:
 	"""Capture from loopback or read a PCAP, then write redacted records."""
 	try:
 		if args.mode == "pcap":
-			packets = sniff(offline=args.pcap, count=args.count, filter=args.filter, promisc=False)
+			packets = read_pcap(args.pcap, args.filter, args.count)
 		else:
 			packets = sniff(iface="lo", count=args.count, filter=args.filter, promisc=False)
 	except (PermissionError, OSError) as exc:
