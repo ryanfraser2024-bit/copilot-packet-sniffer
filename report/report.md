@@ -1,10 +1,11 @@
-# Copilot-Assisted Packet Sniffer: Seeing the Network (Ethically)
-
-**Student:** Ryan Fraser
-
-**Project:** Packet Sniffer and Redaction Lab
-
+Ryan Fraser<br>
+CTEC 445<br>
+Professor Adrian Carter<br>
+September 22, 2026<br>
+Project 2: Packet Sniffer<br>
 **Platform:** GitHub Codespaces
+
+# Copilot-Assisted Packet Sniffer: Seeing the Network (Ethically)
 
 ## 1. Purpose and Ethical Scope
 
